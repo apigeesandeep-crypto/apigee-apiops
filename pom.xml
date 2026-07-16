@@ -7,8 +7,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <apigee.org>apigee-eval-project-502309</apigee.org>
-        <apigee.env>eval</apigee.env>
+        <apigee.org>${APIGEE_ORG}</apigee.org>
+        <apigee.env>${APIGEE_ENV}</apigee.env>
         <apigee.hosturl>https://apigee.googleapis.com</apigee.hosturl>
         <apigee.apitype>configbundle</apigee.apitype>
         <apigee.options>override</apigee.options>
@@ -18,30 +18,74 @@
     </properties>
 
     <profiles>
-        <profile><id>eval</id><properties><apigee.env>eval</apigee.env></properties></profile>
-        <profile><id>dev</id><properties><apigee.env>dev</apigee.env></properties></profile>
-        <profile><id>prod</id><properties><apigee.env>prod</apigee.env></properties></profile>
+        <profile>
+            <id>eval</id>
+            <properties><apigee.env>eval</apigee.env></properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties><apigee.env>dev</apigee.env></properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties><apigee.env>prod</apigee.env></properties>
+        </profile>
     </profiles>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apigee-config-releases</id>
+            <name>Apigee Config Maven Repo</name>
+            <url>https://apigee.github.io/apigee-config-maven-plugin/maven/repo</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>apigee-edge-releases</id>
+            <name>Apigee Edge Maven Repo</name>
+            <url>https://apigee.github.io/apigee-edge-maven-plugin/maven/repo</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <plugins>
+            <!-- Deploy proxy/sharedflow bundles -->
             <plugin>
                 <groupId>io.apigee.build-tools.enterprise4g</groupId>
                 <artifactId>apigee-edge-maven-plugin</artifactId>
                 <version>2.5.1</version>
                 <executions>
-                    <execution><id>configure-bundle</id><phase>package</phase><goals><goal>configure</goal></goals></execution>
-                    <execution><id>deploy-bundle</id><phase>install</phase><goals><goal>deploy</goal></goals></execution>
+                    <execution>
+                        <id>configure-bundle</id>
+                        <phase>package</phase>
+                        <goals><goal>configure</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>deploy-bundle</id>
+                        <phase>install</phase>
+                        <goals><goal>deploy</goal></goals>
+                    </execution>
                 </executions>
             </plugin>
+            <!-- Deploy config: products, developers, apps -->
             <plugin>
                 <groupId>com.apigee.edge.config</groupId>
                 <artifactId>apigee-config-maven-plugin</artifactId>
                 <version>2.7.1</version>
                 <executions>
-                    <execution><id>create-config-apiproduct</id><phase>install</phase><goals><goal>apiproducts</goal></goals></execution>
-                    <execution><id>create-config-developer</id><phase>install</phase><goals><goal>developers</goal></goals></execution>
-                    <execution><id>create-config-developerapps</id><phase>install</phase><goals><goal>apps</goal></goals></execution>
+                    <execution>
+                        <id>create-config-apiproduct</id>
+                        <phase>install</phase>
+                        <goals><goal>apiproducts</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>create-config-developer</id>
+                        <phase>install</phase>
+                        <goals><goal>developers</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>create-config-developerapps</id>
+                        <phase>install</phase>
+                        <goals><goal>apps</goal></goals>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
