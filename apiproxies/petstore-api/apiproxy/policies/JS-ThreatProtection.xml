@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Javascript name="JS-ThreatProtection" timeLimit="200">
+    <DisplayName>JS-ThreatProtection</DisplayName>
+    <ResourceURL>jsc://threat-protection.js</ResourceURL>
+</Javascript>

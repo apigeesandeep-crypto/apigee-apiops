@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlowBundle revision="1" name="sf-logging">
+    <DisplayName>sf-logging</DisplayName>
+    <Description>Request/response message logging</Description>
+    <Policies>
+        <Policy>ML-CloudLogging</Policy>
+    </Policies>
+    <SharedFlows><SharedFlow>default</SharedFlow></SharedFlows>
+</SharedFlowBundle>
