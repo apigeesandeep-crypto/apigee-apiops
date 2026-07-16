@@ -45,7 +45,7 @@
         <AlwaysEnforce>true</AlwaysEnforce>
     </DefaultFaultRule>
     <HTTPProxyConnection>
-        <BasePath>/petstore/v1</BasePath>
+        <BasePath>/petstore/v2</BasePath>
     </HTTPProxyConnection>
     <RouteRule name="NoRoute">
         <Condition>request.verb == "OPTIONS"</Condition>
