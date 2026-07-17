@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<FlowCallout name="FC-Security">
-    <DisplayName>FC-Security</DisplayName>
-    <SharedFlowBundle>sf-security</SharedFlowBundle>
-</FlowCallout>

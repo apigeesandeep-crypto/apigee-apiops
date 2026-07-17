@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<FlowCallout name="FC-CORS">
-    <DisplayName>FC-CORS</DisplayName>
-    <SharedFlowBundle>sf-cors</SharedFlowBundle>
-</FlowCallout>

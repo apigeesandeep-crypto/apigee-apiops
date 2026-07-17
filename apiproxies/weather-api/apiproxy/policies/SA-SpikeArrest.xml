@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<SpikeArrest name="SA-SpikeArrest">
-    <DisplayName>SA-SpikeArrest</DisplayName>
-    <Rate>50ps</Rate>
-    <Identifier ref="request.header.x-api-key"/>
-    <UseEffectiveCount>true</UseEffectiveCount>
-</SpikeArrest>

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<SharedFlow name="default">
-    <Step><Name>OA-VerifyAccessToken</Name></Step>
-    <Step><Name>JT-JSONProtection</Name></Step>
-    <Step><Name>JS-ThreatProtection</Name></Step>
-</SharedFlow>
