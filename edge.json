@@ -1,0 +1,55 @@
+{
+  "orgConfig": {
+    "apiProducts": [
+      {
+        "name": "petstore-product",
+        "displayName": "Petstore Product",
+        "description": "Access to Petstore API \u2014 100 req/min",
+        "approvalType": "auto",
+        "attributes": [
+          {
+            "name": "access",
+            "value": "public"
+          }
+        ],
+        "environments": [
+          "eval"
+        ],
+        "proxies": [
+          "petstore-api"
+        ],
+        "quota": "100",
+        "quotaInterval": "1",
+        "quotaTimeUnit": "minute",
+        "scopes": [
+          "read",
+          "write"
+        ]
+      },
+      {
+        "name": "weather-product",
+        "displayName": "Weather Product",
+        "description": "Access to Weather API \u2014 200 req/min",
+        "approvalType": "auto",
+        "attributes": [
+          {
+            "name": "access",
+            "value": "public"
+          }
+        ],
+        "environments": [
+          "eval"
+        ],
+        "proxies": [
+          "weather-api"
+        ],
+        "quota": "200",
+        "quotaInterval": "1",
+        "quotaTimeUnit": "minute",
+        "scopes": []
+      }
+    ],
+    "developers": [],
+    "developerApps": {}
+  }
+}

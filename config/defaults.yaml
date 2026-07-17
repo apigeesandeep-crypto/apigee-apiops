@@ -1,0 +1,130 @@
+# ─────────────────────────────────────────────────────────────
+# Apigee X — Master Build Configuration
+# ─────────────────────────────────────────────────────────────
+org: "project=apigee-eval-project-502309"
+env: "eval"
+
+# ── Shared Flows ────────────────────────────────────────────
+shared_flows:
+
+  - name: sf-security
+    description: "Common security: API key verify + JSON threat protection"
+    policies:
+      - name: VA-VerifyKey
+        type: verify-api-key
+      - name: JT-JSONProtection
+        type: json-threat-protection
+
+  - name: sf-cors
+    description: "CORS preflight + response headers"
+    policies:
+      - name: RF-CORSPreflight
+        type: cors-preflight
+      - name: AM-CORSHeaders
+        type: cors-headers
+
+  - name: sf-logging
+    description: "Request/response Cloud Logging"
+    policies:
+      - name: ML-CloudLogging
+        type: message-logging
+
+# ── API Proxies ─────────────────────────────────────────────
+api_proxies:
+
+  - name: petstore-api
+    display_name: "Petstore API"
+    description: "Petstore sample API"
+    base_path: /petstore/v1
+    target_url: https://petstore3.swagger.io/api/v3
+    policies:
+      quota:
+        allow_count: 100
+        interval: 1
+        time_unit: minute
+      spike_arrest:
+        rate: 30ps
+      verify_api_key: true
+      cors: true
+      security_flow: sf-security
+      cors_flow: sf-cors
+      remove_auth_header: true
+      threat_protection: true
+    fault_rules:
+      - name: InvalidApiKey
+        condition: "fault.name = \"InvalidApiKey\" OR fault.name = \"FailedToResolveAPIKey\""
+        status_code: 401
+        reason: Unauthorized
+        message: "Invalid or missing API key"
+      - name: QuotaViolation
+        condition: "fault.name = \"QuotaViolation\""
+        status_code: 429
+        reason: TooManyRequests
+        message: "Rate limit exceeded. Try again later."
+      - name: SpikeArrestViolation
+        condition: "fault.name = \"SpikeArrestViolation\""
+        status_code: 429
+        reason: TooManyRequests
+        message: "Too many requests. Slow down."
+
+  - name: weather-api
+    display_name: "Weather API"
+    description: "Open-Meteo weather data"
+    base_path: /weather/v1
+    target_url: https://api.open-meteo.com/v1
+    policies:
+      quota:
+        allow_count: 200
+        interval: 1
+        time_unit: minute
+      spike_arrest:
+        rate: 50ps
+      verify_api_key: true
+      cors: true
+      security_flow: sf-security
+      cors_flow: sf-cors
+      remove_auth_header: true
+      threat_protection: false
+    fault_rules:
+      - name: InvalidApiKey
+        condition: "fault.name = \"InvalidApiKey\" OR fault.name = \"FailedToResolveAPIKey\""
+        status_code: 401
+        reason: Unauthorized
+        message: "Invalid or missing API key"
+      - name: QuotaViolation
+        condition: "fault.name = \"QuotaViolation\""
+        status_code: 429
+        reason: TooManyRequests
+        message: "Rate limit exceeded."
+
+# ── API Products ────────────────────────────────────────────
+api_products:
+
+  - name: petstore-product
+    display_name: "Petstore Product"
+    description: "Access to Petstore API — 100 req/min"
+    approval_type: auto
+    access: public
+    environments:
+      - eval
+    proxies:
+      - petstore-api
+    quota: 100
+    quota_interval: 1
+    quota_time_unit: minute
+    scopes:
+      - read
+      - write
+
+  - name: weather-product
+    display_name: "Weather Product"
+    description: "Access to Weather API — 200 req/min"
+    approval_type: auto
+    access: public
+    environments:
+      - eval
+    proxies:
+      - weather-api
+    quota: 200
+    quota_interval: 1
+    quota_time_unit: minute

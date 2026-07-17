@@ -1,0 +1,68 @@
+# ──────────────────────────────────────────────────────────────
+# Lint check for Apigee proxies and shared flows
+# Runs on pull requests to main
+# ──────────────────────────────────────────────────────────────
+
+name: Apigee Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Apigee Lint Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install apigeelint
+        run: npm install -g apigeelint
+
+      - name: Lint API proxies
+        run: |
+          EXIT=0
+          for dir in apiproxies/*/apiproxy; do
+            PROXY_NAME=$(basename $(dirname "$dir"))
+            echo "=== $PROXY_NAME ==="
+            apigeelint \
+              -s "$dir" \
+              -f table.js \
+              --profile apigee \
+              --maxWarnings 10 || EXIT=1
+            echo ""
+          done
+          exit $EXIT
+
+      - name: Lint shared flows
+        run: |
+          for dir in sharedflows/*/sharedflowbundle; do
+            FLOW_NAME=$(basename $(dirname "$dir"))
+            echo "=== $FLOW_NAME ==="
+            apigeelint \
+              -s "$dir" \
+              -f table.js \
+              --profile apigee \
+              --maxWarnings 10 || true
+            echo ""
+          done
+
+      - name: Upload lint report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report
+          path: |
+            apiproxies/
+            sharedflows/
+          retention-days: 7

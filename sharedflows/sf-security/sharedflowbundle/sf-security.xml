@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlowBundle revision="1" name="sf-security">
+    <DisplayName>sf-security</DisplayName>
+    <Description>Common security: API key verify + JSON threat protection</Description>
+    <Policies>
+        <Policy>VA-VerifyKey</Policy>
+<Policy>JT-JSONProtection</Policy>
+    </Policies>
+    <SharedFlows>
+        <SharedFlow>default</SharedFlow>
+    </SharedFlows>
+</SharedFlowBundle>
