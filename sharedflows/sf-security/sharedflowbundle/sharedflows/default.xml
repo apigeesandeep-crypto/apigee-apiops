@@ -1,4 +1,4 @@
-    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <SharedFlow name="default">
         <Step><Name>VA-VerifyKey</Name></Step>
 <Step><Name>JT-JSONProtection</Name></Step>

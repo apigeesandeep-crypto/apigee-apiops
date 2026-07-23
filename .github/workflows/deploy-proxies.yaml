@@ -26,21 +26,32 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       proxies: ${{ steps.find.outputs.proxies }}
+      has_changes: ${{ steps.find.outputs.has_changes }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Find changed proxies
         id: find
         run: |
-          CHANGED=$(git diff --name-only HEAD~1 HEAD -- apiproxies/ \
-            | cut -d'/' -f2 | sort -u \
-            | jq -R -s -c 'split("\n") | map(select(. != ""))')
+          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            CHANGED=$(ls -d apiproxies/*/ 2>/dev/null | xargs -I{} basename {} \
+              | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          else
+            CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- apiproxies/ \
+              | cut -d'/' -f2 | sort -u \
+              | jq -R -s -c 'split("\n") | map(select(. != ""))')
+          fi
+          if [ -z "$CHANGED" ] || [ "$CHANGED" = "null" ]; then
+            CHANGED="[]"
+          fi
+          HAS_CHANGES=$(if [ "$CHANGED" = "[]" ]; then echo "false"; else echo "true"; fi)
           echo "proxies=$CHANGED" >> $GITHUB_OUTPUT
-          echo ""
+          echo "has_changes=$HAS_CHANGES" >> $GITHUB_OUTPUT
           echo "==> Changed proxies: $CHANGED"
+
 
   # ── JOB 2 — Lint ──────────────────────────────────────────
   lint:
@@ -89,7 +100,8 @@ jobs:
   maven-deploy:
     name: 3 · Maven Build & Deploy to Apigee
     runs-on: ubuntu-latest
-    needs: lint
+    needs: [detect, lint]
+    if: needs.detect.outputs.has_changes == 'true'
 
     permissions:
       contents: read
@@ -101,11 +113,11 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.ref }}
 
-      # ── Keyless GCP auth via WIF ───────────────────────────
+      # — Keyless GCP auth via WIF ———————————————————
       - name: Authenticate to GCP via Workload Identity Federation
         id: auth
         uses: google-github-actions/auth@v2
@@ -114,14 +126,14 @@ jobs:
           service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
           token_format: access_token
 
-      # ── Java 11 ────────────────────────────────────────────
+      # — Java 11 ————————————————————————————————————
       - name: Set up Java 11
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '11'
 
-      # ── Maven cache ────────────────────────────────────────
+      # — Maven cache —————————————————————————————————
       - name: Cache Maven dependencies
         uses: actions/cache@v4
         with:
@@ -130,7 +142,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # ── Maven deploy ───────────────────────────────────────
+      # — Maven deploy ————————————————————————————————
       - name: Run Maven deploy via apigee-edge-maven-plugin
         env:
           APIGEE_ORG: ${{ secrets.APIGEE_ORG }}
@@ -138,34 +150,21 @@ jobs:
           APIGEE_TOKEN: ${{ steps.auth.outputs.access_token }}
         working-directory: apiproxies/${{ matrix.proxy }}
         run: |
-          echo "==> Starting Maven deploy …"
-          echo "  Org     : $APIGEE_ORG"
-          echo "  Env     : $APIGEE_ENV"
-          echo "  Profile : $APIGEE_ENV"
-          echo "  Proxy   : ${{ matrix.proxy }}"
-          echo ""
-
-          mvn install \
+          echo "==> Starting Maven deploy for ${{ matrix.proxy }}"
+          mvn clean install \
             -P"${APIGEE_ENV}" \
             -Dorg="${APIGEE_ORG}" \
             -Denv="${APIGEE_ENV}" \
             -Dbearer="${APIGEE_TOKEN}" \
             --no-transfer-progress \
-            --batch-mode \
-            -f ../../pom.xml
+            --batch-mode
+          echo "==> Deploy complete for ${{ matrix.proxy }}"
 
-          echo "==> Maven deploy complete."
-
-      # ── Summary ────────────────────────────────────────────
+      # — Deployment summary ——————————————————————————
       - name: Deployment summary
+        if: always()
         run: |
-          echo "──────────────────────────────────────"
-          echo "  Proxy       : ${{ matrix.proxy }}"
-          echo "  Org         : ${{ secrets.APIGEE_ORG }}"
-          echo "  Environment : ${{ secrets.APIGEE_ENV }}"
-          echo "  Plugin      : apigee-edge-maven-plugin 2.5.2"
-          echo "  Auth        : WIF keyless (bearer token)"
-          echo "  Triggered by: ${{ github.actor }}"
-          echo "  Branch      : ${{ github.ref_name }}"
-          echo "  Commit SHA  : ${{ github.sha }}"
-          echo "──────────────────────────────────────"
+          echo "### Deployment Result: ${{ matrix.proxy }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Org:** ${{ secrets.APIGEE_ORG }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Env:** ${{ secrets.APIGEE_ENV }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
