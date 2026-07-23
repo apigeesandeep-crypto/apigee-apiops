@@ -18,7 +18,7 @@ on:
     paths:
       - 'apiproxies/**'
       - 'pom.xml'
-    workflow_dispatch:
+  workflow_dispatch:
     
 
 jobs:

@@ -18,7 +18,7 @@ on:
     paths:
       - 'sharedflows/**'
       - 'pom.xml'
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   # ── JOB 1 — Detect Changed Flows ──────────────────────────
