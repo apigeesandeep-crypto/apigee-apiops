@@ -49,7 +49,29 @@
         "scopes": []
       }
     ],
-    "developers": [],
-    "developerApps": {}
+    "developers": [
+      {
+        "email": "hampianjanadri@gmail.com",
+        "firstName": "Hampi",
+        "lastName": "Anjanadri",
+        "userName": "hampianjanadri",
+        "attributes": []
+      }
+    ],
+    "developerApps": {
+      "hampianjanadri@gmail.com":[
+        {
+          "name": "petstore-app",
+          "apiProducts": ["petstore-product"],
+          "callbackUrl": "",
+          "attributes": [
+            {
+              "name": "notes",
+              "value": "Petstore test app"
+            }
+          ]
+        }
+      ]
+    }
   }
 }
