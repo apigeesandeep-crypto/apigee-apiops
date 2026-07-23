@@ -17,6 +17,7 @@ on:
       - main
     paths:
       - 'edge.json'
+    workkflow_dispatch:
 
 jobs:
   deploy:

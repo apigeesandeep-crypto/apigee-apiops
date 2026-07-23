@@ -18,6 +18,8 @@ on:
     paths:
       - 'apiproxies/**'
       - 'pom.xml'
+    workkflow_dispatch:
+    
 
 jobs:
   # ── JOB 1 — Detect Changed Proxies ────────────────────────
