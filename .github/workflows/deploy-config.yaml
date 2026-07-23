@@ -78,10 +78,9 @@ jobs:
             -Dapigee.apiversion=v1 \
             -Dapigee.bearer="${APIGEE_TOKEN}" \
             -Dapigee.config.options=update \
-            -Dapigee.config.dir=. \
+            -Dapigee.config.file=edge.json \
             --no-transfer-progress \
             --batch-mode
-
 
           echo "==> Config deploy complete."
 
