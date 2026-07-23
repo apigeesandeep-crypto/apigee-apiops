@@ -37,10 +37,16 @@ jobs:
       - name: Find changed shared flows
         id: find
         run: |
-          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # Manual trigger — deploy all
+            CHANGED=$(ls -d sharedflows/*/ 2>/dev/null | xargs -I{} basename {} \
+              | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          elif [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            # First push — deploy all
             CHANGED=$(ls -d sharedflows/*/ 2>/dev/null | xargs -I{} basename {} \
               | jq -R -s -c 'split("\n") | map(select(length > 0))')
           else
+            # Normal push — only changed
             CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- sharedflows/ \
               | cut -d'/' -f2 | sort -u \
               | jq -R -s -c 'split("\n") | map(select(. != ""))')
@@ -52,7 +58,6 @@ jobs:
           echo "flows=$CHANGED" >> $GITHUB_OUTPUT
           echo "has_changes=$HAS_CHANGES" >> $GITHUB_OUTPUT
           echo "==> Changed shared flows: $CHANGED"
-
 
   # ── JOB 2 — Lint ──────────────────────────────────────────
   lint:
