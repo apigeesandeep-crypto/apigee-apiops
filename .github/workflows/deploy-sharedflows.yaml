@@ -101,7 +101,7 @@ jobs:
 
     strategy:
       matrix:
-        flow: ${{ fromJson(needs.detect.outputs.flows) }}
+        flow: ${{ fromJson(needs.detect.outputs.flows || '[]') }}
 
     steps:
       - name: Checkout repository
