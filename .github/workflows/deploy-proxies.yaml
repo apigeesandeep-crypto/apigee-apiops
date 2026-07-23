@@ -38,7 +38,10 @@ jobs:
       - name: Find changed proxies
         id: find
         run: |
-          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            CHANGED=$(ls -d apiproxies/*/ 2>/dev/null | xargs -I{} basename {} \
+              | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          elif [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
             CHANGED=$(ls -d apiproxies/*/ 2>/dev/null | xargs -I{} basename {} \
               | jq -R -s -c 'split("\n") | map(select(length > 0))')
           else
