@@ -40,8 +40,6 @@
                 <apigee.env>${env}</apigee.env>
                 <apigee.bearer>${bearer}</apigee.bearer>
                 <apigee.options>override</apigee.options>
-                <apigee.delay>5000</apigee.delay>
-                <apigee.override.delay>5</apigee.override.delay>
             </properties>
             <build>
                 <plugins>
