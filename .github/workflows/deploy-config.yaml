@@ -71,16 +71,17 @@ jobs:
           echo "  Env : $APIGEE_ENV"
           echo ""
 
-          mvn install \
-            -P"${APIGEE_ENV}" \
-            -Dorg="${APIGEE_ORG}" \
-            -Denv="${APIGEE_ENV}" \
-            -Dbearer="${APIGEE_TOKEN}" \
+          mvn install -Pconfig-deploy \
+            -Dapigee.org="${APIGEE_ORG}" \
+            -Dapigee.env="${APIGEE_ENV}" \
+            -Dapigee.hosturl=https://apigee.googleapis.com \
+            -Dapigee.apiversion=v1 \
+            -Dapigee.bearer="${APIGEE_TOKEN}" \
             -Dapigee.config.options=update \
             -Dapigee.config.dir=. \
             --no-transfer-progress \
-            --batch-mode \
-            -f pom.xml
+            --batch-mode
+
 
           echo "==> Config deploy complete."
 
