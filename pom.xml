@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>apigee</groupId>
@@ -11,142 +10,112 @@
     <packaging>pom</packaging>
     <name>apigee-proxy-parent</name>
 
-    <properties>
-        <apigee.plugin.version>2.5.2</apigee.plugin.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-    <profiles>
-        <profile>
-            <id>eval</id>
-            <properties>
-                <apigee.org>${org}</apigee.org>
-                <apigee.env>${env}</apigee.env>
-                <apigee.hosturl>https://apigee.googleapis.com</apigee.hosturl>
-                <apigee.apiversion>v1</apigee.apiversion>
-                <apigee.bearer>${bearer}</apigee.bearer>
-                <apigee.options>override</apigee.options>
-                <apigee.proxy.basedir>.</apigee.proxy.basedir>
-                <apigee.delay>5000</apigee.delay>
-                <apigee.config.options>update</apigee.config.options>
-                <apigee.config.dir>${basedir}</apigee.config.dir>
-            </properties>
-        </profile>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <apigee.org>${org}</apigee.org>
-                <apigee.env>${env}</apigee.env>
-                <apigee.hosturl>https://apigee.googleapis.com</apigee.hosturl>
-                <apigee.apiversion>v1</apigee.apiversion>
-                <apigee.bearer>${bearer}</apigee.bearer>
-                <apigee.options>override</apigee.options>
-                <apigee.proxy.basedir>.</apigee.proxy.basedir>
-                <apigee.delay>5000</apigee.delay>
-                <apigee.config.options>update</apigee.config.options>
-                <apigee.config.dir>${basedir}</apigee.config.dir>
-            </properties>
-        </profile>
-        <profile>
-            <id>prod</id>
-            <properties>
-                <apigee.org>${org}</apigee.org>
-                <apigee.env>${env}</apigee.env>
-                <apigee.hosturl>https://apigee.googleapis.com</apigee.hosturl>
-                <apigee.apiversion>v1</apigee.apiversion>
-                <apigee.bearer>${bearer}</apigee.bearer>
-                <apigee.options>override</apigee.options>
-                <apigee.proxy.basedir>.</apigee.proxy.basedir>
-                <apigee.delay>5000</apigee.delay>
-                <apigee.config.options>update</apigee.config.options>
-                <apigee.config.dir>${basedir}</apigee.config.dir>
-            </properties>
-        </profile>
-    </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-apiproxy-to-target</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/apiproxy</outputDirectory>
-                            <overwrite>true</overwrite>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/apiproxy</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>io.apigee.build-tools.enterprise4g</groupId>
-                <artifactId>apigee-edge-maven-plugin</artifactId>
-                <version>${apigee.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>deploy-proxy</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>configure</goal>
-                            <goal>deploy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.apigee.edge.config</groupId>
-                <artifactId>apigee-config-maven-plugin</artifactId>
-                <version>2.7.1</version>
-                <executions>
-                    <execution>
-                        <id>create-config-apiproduct</id>
-                        <phase>install</phase>
-                        <goals><goal>apiproducts</goal></goals>
-                    </execution>
-                    <execution>
-                        <id>create-config-developer</id>
-                        <phase>install</phase>
-                        <goals><goal>developers</goal></goals>
-                    </execution>
-                    <execution>
-                        <id>create-config-developerapps</id>
-                        <phase>install</phase>
-                        <goals><goal>apps</goal></goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <pluginRepositories>
         <pluginRepository>
             <id>central</id>
             <name>Maven Central</name>
             <url>https://repo1.maven.org/maven2</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
         </pluginRepository>
         <pluginRepository>
             <id>apigee-config-releases</id>
-            <name>Apigee Config Maven Repo</name>
+            <name>Apigee Config Maven Releases</name>
             <url>https://apigee.github.io/apigee-config-maven-plugin/maven/repo</url>
         </pluginRepository>
         <pluginRepository>
             <id>apigee-edge-releases</id>
-            <name>Apigee Edge Maven Repo</name>
+            <name>Apigee Edge Maven Releases</name>
             <url>https://apigee.github.io/apigee-edge-maven-plugin/maven/repo</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <profiles>
+        <!-- ── Environment profile ─────────────────────────── -->
+        <profile>
+            <id>eval</id>
+            <properties>
+                <apigee.profile>eval</apigee.profile>
+                <apigee.hosturl>https://apigee.googleapis.com</apigee.hosturl>
+                <apigee.apiversion>v1</apigee.apiversion>
+                <apigee.org>${org}</apigee.org>
+                <apigee.env>${env}</apigee.env>
+                <apigee.bearer>${bearer}</apigee.bearer>
+                <apigee.options>override</apigee.options>
+                <apigee.delay>5000</apigee.delay>
+                <apigee.override.delay>5</apigee.override.delay>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- 1. Copy apiproxy/sharedflowbundle to target/ -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>copy-resources</id>
+                                <phase>process-resources</phase>
+                                <goals><goal>copy-resources</goal></goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/target</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${basedir}</directory>
+                                            <includes>
+                                                <include>apiproxy/**</include>
+                                                <include>sharedflowbundle/**</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- 2. Deploy proxy/sharedflow to Apigee -->
+                    <plugin>
+                        <groupId>io.apigee.build-tools.enterprise4g</groupId>
+                        <artifactId>apigee-edge-maven-plugin</artifactId>
+                        <version>2.5.2</version>
+                        <executions>
+                            <execution>
+                                <id>configure-bundle</id>
+                                <phase>package</phase>
+                                <goals><goal>configure</goal></goals>
+                            </execution>
+                            <execution>
+                                <id>deploy-bundle</id>
+                                <phase>install</phase>
+                                <goals><goal>deploy</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- ── Config-only profile (products/developers/apps) ── -->
+        <profile>
+            <id>config-deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.apigee.edge.config</groupId>
+                        <artifactId>apigee-config-maven-plugin</artifactId>
+                        <version>2.7.1</version>
+                        <executions>
+                            <execution>
+                                <id>create-config</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>apiproducts</goal>
+                                    <goal>developers</goal>
+                                    <goal>apps</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
